@@ -37,7 +37,7 @@ async function start() {
             const { databaseTask } = answers;
             switch (databaseTask) {
                 case "View All Employees":
-                    // viewAllEmployees();
+                    viewAllEmployees();
                     break;
                 case "Add Employee":
                     // addEmployee();
@@ -63,4 +63,13 @@ async function start() {
                     break;
             }
         });
+}
+function viewAllEmployees() {
+    const query = "SELECT * FROM employee";
+    db.query(query, (err, results) => {
+        if (err) throw err;
+        console.log("All Employees:");
+        console.table(results);
+        start();
+    });
 }
