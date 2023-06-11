@@ -50,10 +50,10 @@ async function start() {
                     viewAllRoles();
                     break;
                 case "Add Role":
-                    // addRole();
+                    addRole();
                     break;
                 case "View All Departments":
-                    // viewAllDepartments();
+                    viewAllDepartments();
                     break;
                 case "Add Department":
                     // addDepartment();
@@ -157,5 +157,68 @@ function updateEmployeeRole() {
 }
 
 function viewAllRoles() {
-    const 
+    const query = "SELECT * FROM role";
+    db.query(query, (err, results) => {
+        if (err) throw err;
+        console.log("All Roles:");
+        console.table(results);
+        start();
+    });
+}
+
+function addRole() {
+    const departmentQuery = "SELECT * FROM department";
+
+    db.query(departmentQuery, (err, res) => {
+        if (err) throw err;
+      
+        const departments = res.map((department) => ({ name: department.name, id: department.id }));
+        console.log('Department Choices:', departments);
+
+        const questions = [
+            {
+                type: 'input',
+                name: 'newRole',
+                message: 'What is the name of the role?'
+            },
+            {
+                type: 'input',
+                name: 'newSalary',
+                message: 'What is the salary of the role?'
+            },
+            {
+                name: 'selectedDepartment',
+                type: 'list',
+                message: 'Which department does the role belong to?',
+                choices: departments
+            },
+        ];
+
+        inquirer.prompt(questions).then((answers) => {
+            const { newRole, newSalary, selectedDepartment } = answers;
+
+            const roleQuery = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+
+
+            const selectedDepartmentId = departments.find(
+                (department) => department.department_name === selectedDepartment
+              ).id;
+
+            db.query(roleQuery, [newRole, newSalary, selectedDepartmentId], (err, result) => {
+                if (err) throw err;
+
+                console.log("Role added successfully!");
+                start();
+            });
+        });
+    });
+}
+function viewAllDepartments() {
+    const query = "SELECT * FROM department";
+    db.query(query, (err, results) => {
+        if (err) throw err;
+        console.log("All Departments:");
+        console.table(results);
+        start();
+    });
 }
