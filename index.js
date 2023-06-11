@@ -56,7 +56,7 @@ async function start() {
                     viewAllDepartments();
                     break;
                 case "Add Department":
-                    // addDepartment();
+                    addDepartment();
                     break;
                 case "Quit":
                     db.end();
@@ -105,7 +105,7 @@ function addEmployee() {
 
         db.query(query, values, (err, result) => {
             if (err) throw err;
-            console.log("Employee added successfully!");
+            console.log("Employee added!");
             start();
         });
     });
@@ -148,7 +148,7 @@ function updateEmployeeRole() {
 
             db.query(query, values, (err, result) => {
                 if (err) throw err;
-                console.log("Employee role updated successfully!");
+                console.log("Employee role updated!");
                 start();
             });
         });
@@ -207,7 +207,7 @@ function addRole() {
             db.query(roleQuery, [newRole, newSalary, selectedDepartmentId], (err, result) => {
                 if (err) throw err;
 
-                console.log("Role added successfully!");
+                console.log("Role added!");
                 start();
             });
         });
@@ -222,3 +222,21 @@ function viewAllDepartments() {
         start();
     });
 }
+function addDepartment() {
+    const query = `INSERT INTO department SET ?`;
+    const questions = [
+        {
+            name: "newDept",
+            type: "input",
+            message: "What is the name of the department?"
+        }
+    ]
+
+    inquirer.prompt(questions).then((answers) => {
+        db.query(query, { department_name: answers.newDept }, (err) => {
+          if (err) throw err;
+          console.log("Department added!");
+          start();
+        });
+      });
+    }
