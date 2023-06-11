@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "inquirer": "^9.2.7",
     "mysql2": "^3.3.3"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25"
   }
 }
