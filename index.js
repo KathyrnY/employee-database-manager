@@ -1,3 +1,4 @@
+const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
 const db = mysql.createConnection({
@@ -14,9 +15,9 @@ db.connect(err => {
 });
 
 async function start() {
-    const inquirer = await import('inquirer');
+    // const inquirerStart = await import('inquirer');
     inquirer
-        .default.prompt([
+        .prompt([
             {
                 type: "list",
                 name: "databaseTask",
@@ -40,13 +41,13 @@ async function start() {
                     viewAllEmployees();
                     break;
                 case "Add Employee":
-                    // addEmployee();
+                    addEmployee();
                     break;
                 case "Update Employee Role":
-                    // updateEmployeeRole();
+                    updateEmployeeRole();
                     break;
                 case "View All Roles":
-                    // viewAllRoles();
+                    viewAllRoles();
                     break;
                 case "Add Role":
                     // addRole();
@@ -72,4 +73,89 @@ function viewAllEmployees() {
         console.table(results);
         start();
     });
+}
+function addEmployee() {
+    const questions = [
+        {
+            type: "input",
+            name: "firstName",
+            message: "Enter the first name of the employee:",
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "Enter the last name of the employee:",
+        },
+        {
+            type: "input",
+            name: "roleId",
+            message: "Enter the role ID of the employee:",
+        },
+        {
+            type: "input",
+            name: "managerId",
+            message: "Enter the manager ID of the employee (leave empty if none):",
+        },
+    ];
+
+    inquirer.prompt(questions).then((answers) => {
+        const { firstName, lastName, roleId, managerId } = answers;
+        const query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+        const values = [firstName, lastName, roleId, managerId];
+
+        db.query(query, values, (err, result) => {
+            if (err) throw err;
+            console.log("Employee added successfully!");
+            start();
+        });
+    });
+}
+function updateEmployeeRole() {
+    const employeeQuery = "SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM employee";
+    db.query(employeeQuery, (err, employees) => {
+        if (err) throw err;
+    const roleQuery = "SELECT id, title FROM role";
+        db.query(roleQuery, (err, roles) => {
+            if (err) throw err;
+        const employeeChoices = employees.map((employee) => ({
+                name: employee.name,
+                value: employee.id,
+            }));
+
+        const roleChoices = roles.map((role) => ({
+                name: role.title,
+                value: role.id,
+            }));
+        const questions = [
+            {
+                name: 'employee',
+                type: 'list',
+                message: 'Which employee\'s role do you want to update?',
+                choices: employeeChoices
+            }, 
+            {
+                name: 'newRole',
+                type: 'list',
+                message: 'Which role do you want to assign the selected employee?',
+                choices: roleChoices
+            }
+        ];
+
+        inquirer.prompt(questions).then((answers) => {
+            const { employee, newRole } = answers;
+            const query = "UPDATE employee SET role_id = ? WHERE id = ?";
+            const values = [newRole, employee];
+
+            db.query(query, values, (err, result) => {
+                if (err) throw err;
+                console.log("Employee role updated successfully!");
+                start();
+            });
+        });
+    });
+});
+}
+
+function viewAllRoles() {
+    const 
 }
