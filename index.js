@@ -233,7 +233,7 @@ function addDepartment() {
     ]
 
     inquirer.prompt(questions).then((answers) => {
-        db.query(query, { department_name: answers.newDept }, (err) => {
+        db.query(query, {name: answers.newDept }, (err) => {
           if (err) throw err;
           console.log("Department added!");
           start();
