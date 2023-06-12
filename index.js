@@ -201,8 +201,7 @@ function addRole() {
 
 
             const selectedDepartmentId = departments.find(
-                (department) => department.department_name === selectedDepartment
-              ).id;
+                (department) => department.name === selectedDepartment).id;
 
             db.query(roleQuery, [newRole, newSalary, selectedDepartmentId], (err, result) => {
                 if (err) throw err;
